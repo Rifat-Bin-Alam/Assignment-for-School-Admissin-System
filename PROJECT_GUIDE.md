@@ -119,18 +119,12 @@ To guarantee that simultaneous reservation requests never exceed class capacity 
 
 ## 4. How to Open and Run in Visual Studio
 
-1. Open **Visual Studio 2022** (v17.10 or newer) or latest Visual Studio.
+1. Open **Visual Studio**.
 2. Click **File -> Open -> Project/Solution**.
-3. Select `SchoolAdmission.slnx` (or `SchoolAdmission.sln`) from the repository root:
-   `D:\Job\School Admission System\SchoolAdmission.slnx`
-4. In **Solution Explorer**, right-click `SchoolAdmission.Api` and select **Set as Startup Project**.
-5. Ensure your `.env` file exists at the solution root or `backend/SchoolAdmission.Api/` with your PostgreSQL credentials:
-   ```env
-   DB_CONNECTION_STRING=Host=localhost;Port=5433;Database=school_admission;Username=postgres;Password=postgres
-   HOLD_DURATION_SECONDS=600
-   HOLD_CLEANUP_INTERVAL_SECONDS=10
-   ```
-6. Press **F5** (or **Ctrl+F5**) to run.
+3. Select **`SchoolAdmission.sln`** (or `School Admission System.sln`) from the repository root:
+   `D:\Job\School Admission System\SchoolAdmission.sln`
+4. In **Solution Explorer**, right-click **`SchoolAdmission.Api`** and select **Set as Startup Project**.
+5. Press **F5** (or **Ctrl+F5**) to run.
 7. The application will start and listen on `http://localhost:5119`. You can view and interact with endpoints via the OpenAPI specification.
 
 ---
