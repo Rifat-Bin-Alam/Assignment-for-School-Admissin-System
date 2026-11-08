@@ -1,0 +1,37 @@
+# Visual Studio and build outputs
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*
+*.trx
+
+# Package and dependency caches
+packages/
+node_modules/
+dist/
+
+# Environment files and secrets
+.env
+.env.local
+.env.*.local
+
+# Database files and temporary local clusters
+local_db/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Operating system temporary files
+[Tt]humbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
