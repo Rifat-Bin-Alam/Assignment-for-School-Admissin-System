@@ -26,6 +26,17 @@ builder.Services.AddScoped<IAdmissionService, AdmissionService>();
 // Register background service for automatic expiration cleanup
 builder.Services.AddHostedService<HoldCleanupBackgroundService>();
 
+// Configure CORS for frontend access
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // Configure Controllers with camelCase JSON property naming
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -73,6 +84,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
