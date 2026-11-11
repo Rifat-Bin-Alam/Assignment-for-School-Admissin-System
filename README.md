@@ -1,135 +1,161 @@
 # School Admission System
 
-A full-stack seat reservation and school admission system developed for the Assistant Software Engineer recruitment assessment.
+A complete full-stack seat reservation and admission management system built for the **Assistant Software Engineer** recruitment assignment.
 
 The application allows students to reserve temporary seats in specific classes/shifts using their 17-digit Birth Registration Number, handles seat expiration automatically, enforces strict concurrency control to prevent overbooking, and supports confirmation and cancellation of admissions.
 
 ---
 
-## Technologies Used
+## 🚀 Quick Start (Docker - Recommended)
 
-- **Backend:** C#, ASP.NET Core Web API (.NET 10), Entity Framework Core (EF Core 10), Npgsql.
-- **Frontend:** React 18, Vite, JavaScript, CSS (native), React Router.
-- **Database:** PostgreSQL.
-- **Testing:** xUnit, Microsoft.AspNetCore.Mvc.Testing.
-- **Containerization:** Docker, Docker Compose, Nginx.
+The simplest and cleanest way to run the entire application (Database + Backend + Frontend) without installing .NET, Node.js, or PostgreSQL is with Docker.
 
----
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
 
-## Main Features
-
-1. **Class & Shift Management:** Separate capacities for different shifts (e.g., Morning Shift vs Day Shift).
-2. **Temporary Seat Holds:** Automated 10-minute hold window (`HOLD_DURATION_SECONDS`).
-3. **Automatic Hold Expiration:** Seats are automatically released when holds expire; no manual release calls required. A background service periodically purges expired holds in the database.
-4. **Concurrency Safety:** PostgreSQL row-level pessimistic locking (`SELECT ... FOR UPDATE`) prevents race conditions and overbooking.
-5. **Idempotent Confirmation:** Multiple confirmation attempts never increment confirmed seats more than once.
-6. **Student Identification:** Identification via 17-digit Birth Registration Number (`X-Student-Id` header) without passwords or JWT complexity.
-
----
-
-## Project Structure
-
-```text
-School Admission System/
-│
-├── docker-compose.yml               # Multi-container orchestration (Database, Backend, Frontend)
-├── SchoolAdmission.sln               # Visual Studio Solution File
-├── .env.example                     # Environment configuration template
-├── README.md                        # Project documentation
-├── PROJECT_GUIDE.md                 # Developer reference and file map
-├── ASSUMPTIONS.md                   # Architectural and business decisions
-├── AI_USAGE.md                      # AI assistance documentation
-│
-├── backend/
-│   ├── Dockerfile                   # Multi-stage .NET 10 SDK build and runtime image
-│   ├── SchoolAdmission.Api/         # Web API controllers, models, services, migrations
-│   └── SchoolAdmission.Tests/       # 20 Automated xUnit tests (concurrency, expiration, etc.)
-│
-└── frontend/
-    ├── Dockerfile                   # Multi-stage Node.js build and Nginx production server
-    ├── nginx.conf                   # Nginx reverse proxy and client-side routing config
-    └── src/                         # React components, pages, services, styles
-```
-
----
-
-## Prerequisites
-
-- **Docker Desktop** (or Docker Engine + Docker Compose).
-- *Optional (for local development outside Docker):* .NET 10 SDK, Node.js 20+, and PostgreSQL 16+.
-
-The evaluator does **not** need to install .NET SDK, Node.js, or PostgreSQL if using Docker.
-
----
-
-## How to Run the Application (Docker)
-
-1. Clone or download the repository to your machine.
-2. Open a terminal in the root folder (`School Admission System/`).
-3. Run the complete application with a single command:
+### 1. Clone & Start
+Open a terminal in the root project folder:
 
 ```bash
+# Clone the repository
+git clone https://github.com/Rifat-Bin-Alam/Assignment-for-School-Admissin-System.git
+cd Assignment-for-School-Admissin-System
+
+# Build and start all services
 docker compose up --build
 ```
 
-4. Once started, access the application in your browser:
-   - **Frontend UI:** [http://localhost:3000](http://localhost:3000)
-   - **Backend API:** [http://localhost:8080](http://localhost:8080)
-   - **PostgreSQL Database:** `localhost:5432`
+### 2. Access the Applications
+Once the containers are built and started:
+- **Frontend Web UI:** [http://localhost:3000](http://localhost:3000)
+- **Backend Swagger API Docs:** [http://localhost:8080/swagger](http://localhost:8080/swagger)
+- **Backend API Base:** [http://localhost:8080](http://localhost:8080)
+- **PostgreSQL Database:** `localhost:5432`
 
-To stop the containers:
+### 3. Stop the Containers
 ```bash
 docker compose down
 ```
-
-*Note: Persistent data is stored in the `school_admission_postgres_data` volume and survives `docker compose down`.*
+*(All database data is stored in a persistent Docker volume and is preserved across restarts).*
 
 ---
 
-## How to Run Locally Without Docker (Development Mode)
+## 💻 Running Locally Without Docker (Development Mode)
 
-### 1. Database
-Start PostgreSQL on port `5433` (or port `5432` as configured in `.env`).
+If you prefer running directly on your host machine using Visual Studio or the command line:
 
-### 2. Backend
-From the repository root:
-```bash
-dotnet run --project backend/SchoolAdmission.Api/SchoolAdmission.Api.csproj --launch-profile http
+### Prerequisites
+- [.NET 10 SDK](https://dotnet.microsoft.com/download) (or .NET 8 SDK)
+- [Node.js 20+](https://nodejs.org/) & npm
+- [PostgreSQL 16+](https://www.postgresql.org/)
+
+### 1. Database Setup
+Create a PostgreSQL database named `school_admission` (or let Entity Framework Core handle it).
+
+Set your connection string in your environment or update `backend/SchoolAdmission.Api/appsettings.json`:
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Host=localhost;Port=5432;Database=school_admission;Username=postgres;Password=postgres"
+}
 ```
-The backend listens at `http://localhost:5119` (or `http://localhost:8080`). Database migrations run automatically at startup.
 
-### 3. Frontend
-From the `frontend` folder:
+### 2. Run Backend (.NET Web API)
+```bash
+# From repository root
+cd backend/SchoolAdmission.Api
+dotnet run
+```
+*Migrations are applied automatically at startup.*  
+Backend will be available at: **`http://localhost:5119`** (or **`http://localhost:5119/swagger`**).
+
+### 3. Run Frontend (React + Vite)
+Open a second terminal:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-The frontend starts at `http://localhost:5173`.
+Frontend will be available at: **`http://localhost:5173`**.
 
 ---
 
-## Required API Endpoints
+## 🧪 Running Automated Tests
 
-| Method | Endpoint | Description | Status Codes |
-|---|---|---|---|
-| `POST` | `/classes` | Create a new class | `201`, `400` |
-| `GET` | `/classes` | List all classes with seat information | `200` |
-| `GET` | `/classes/{classId}` | Get single class seat information | `200`, `404` |
-| `POST` | `/classes/{classId}/holds` | Create temporary seat reservation (`X-Student-Id` header) | `201`, `400`, `404`, `409` |
-| `GET` | `/holds/{holdId}` | Get reservation status | `200`, `404` |
-| `POST` | `/holds/{holdId}/confirm` | Confirm admission (`X-Student-Id` header) | `200`, `400`, `403`, `404` |
-| `DELETE` | `/holds/{holdId}` | Cancel reservation (`X-Student-Id` header) | `204`, `400`, `403`, `404` |
-| `GET` | `/me/holds` | Get student applications (`X-Student-Id` header) | `200`, `400` |
+The test suite includes 20 comprehensive xUnit tests covering concurrency safety, seat quota limits, hold expiration, simulated payments, idempotency, and cancellation.
 
----
-
-## How to Run Automated Tests
-
-The automated test suite contains 20 integration tests covering all mandatory business rules, concurrency protection, and expiration.
+To run the automated tests from the repository root:
 
 ```bash
 dotnet test SchoolAdmission.sln
 ```
 
-Tests run against an isolated PostgreSQL database with real row-level locking.
+All 20 tests execute against an isolated test database and verify zero overbooking under concurrent hold attempts.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Backend:** C#, ASP.NET Core Web API (.NET 10 / .NET 8), Entity Framework Core (EF Core 10), Npgsql.
+- **Frontend:** React 18, Vite, JavaScript, React Router, CSS.
+- **Database:** PostgreSQL with row-level pessimistic locking (`SELECT ... FOR UPDATE`).
+- **Testing:** xUnit, `Microsoft.AspNetCore.Mvc.Testing`.
+- **Containerization & Deployment:** Docker, Docker Compose, Nginx.
+
+---
+
+## 📋 API Endpoints
+
+All endpoints conform to the assignment specification:
+
+| Method | Endpoint | Description | Headers |
+|---|---|---|---|
+| `POST` | `/classes` | Create a new class/shift | - |
+| `GET` | `/classes` | List all classes with real-time seat counts | - |
+| `GET` | `/classes/{classId}` | Get class details and seat availability | - |
+| `POST` | `/classes/{classId}/holds` | Create temporary seat hold (10 min) | `X-Student-Id` |
+| `GET` | `/holds/{holdId}` | Get hold details and countdown status | - |
+| `POST` | `/holds/{holdId}/confirm` | Confirm admission (simulated payment) | `X-Student-Id` |
+| `DELETE` | `/holds/{holdId}` | Cancel an active hold | `X-Student-Id` |
+| `GET` | `/me/holds` | View all applications for current student | `X-Student-Id` |
+
+---
+
+## 📁 Project Folder Structure
+
+```text
+School Admission System/
+│
+├── docker-compose.yml               # Multi-container orchestration (PostgreSQL, Backend, Frontend)
+├── SchoolAdmission.sln               # Visual Studio Solution File
+├── .env.example                     # Environment variables template
+├── .gitignore                       # Clean Git ignore rules (excludes bin, node_modules, secrets)
+├── README.md                        # Setup and operational guide
+├── PROJECT_GUIDE.md                 # Developer code map and architecture details
+├── ASSUMPTIONS.md                   # Key architectural decisions & business assumptions
+├── AI_USAGE.md                      # AI tool assistance and verification log
+│
+├── backend/
+│   ├── Dockerfile                   # Multi-stage .NET SDK build & runtime image
+│   ├── SchoolAdmission.Api/         # Controllers, Models, Data, Services, Migrations
+│   └── SchoolAdmission.Tests/       # 20 Automated xUnit tests
+│
+└── frontend/
+    ├── Dockerfile                   # Multi-stage Node.js build & Nginx production server
+    ├── nginx.conf                   # Nginx reverse proxy and SPA routing
+    ├── package.json                 # React dependencies and scripts
+    └── src/
+        ├── components/              # Reusable UI components (Navbar, SeatBadge)
+        ├── pages/                   # AdminCreateClass, ClassList, Apply, MyApplications
+        ├── services/                # API client with X-Student-Id header support
+        └── styles/                  # Styling
+```
+
+---
+
+## 📑 Core Business Rules Implemented
+
+1. **Seat Integrity:** `heldSeats + confirmedSeats <= totalSeats` is strictly guaranteed at the database transaction level using pessimistic locking.
+2. **Dual-Layer Expiration:** Holds expire after 10 minutes. Real-time queries treat expired holds as available seats immediately, while a background hosted service purges expired records periodically.
+3. **Shift Separation:** Different shifts (e.g. Morning vs Day) are modeled as distinct classes with independent seat pools.
+4. **Student Identification:** Identification is handled via the 17-digit Birth Registration Number supplied in the `X-Student-Id` header (no password/login required).
+5. **Idempotent Confirmations:** Confirming an already confirmed hold returns success without duplicating confirmed seat counts.
