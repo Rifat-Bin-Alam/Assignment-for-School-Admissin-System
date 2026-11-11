@@ -1,7 +1,7 @@
-# Visual Studio and build outputs
-.vs/
+# .NET build outputs & Visual Studio caches
 bin/
 obj/
+.vs/
 *.user
 *.suo
 *.userosscache
@@ -12,15 +12,18 @@ TestResults/
 [Tt]est[Rr]esult*
 *.trx
 
-# Package and dependency caches
-packages/
+# React / Node / Vite caches & bundles
 node_modules/
 dist/
+dist-ssr/
+.vite/
+packages/
 
 # Environment files and secrets
 .env
 .env.local
 .env.*.local
+*.local
 
 # Database files and temporary local clusters
 local_db/
