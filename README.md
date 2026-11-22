@@ -153,10 +153,3 @@ School Admission System/
 
 ---
 
-## 📑 Core Business Rules Implemented
-
-1. **Seat Integrity:** `heldSeats + confirmedSeats <= totalSeats` is strictly guaranteed at the database transaction level using pessimistic locking.
-2. **Dual-Layer Expiration:** Holds expire after 10 minutes. Real-time queries treat expired holds as available seats immediately, while a background hosted service purges expired records periodically.
-3. **Shift Separation:** Different shifts (e.g. Morning vs Day) are modeled as distinct classes with independent seat pools.
-4. **Student Identification:** Identification is handled via the 17-digit Birth Registration Number supplied in the `X-Student-Id` header (no password/login required).
-5. **Idempotent Confirmations:** Confirming an already confirmed hold returns success without duplicating confirmed seat counts.
