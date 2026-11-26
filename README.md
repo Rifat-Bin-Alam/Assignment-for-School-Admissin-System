@@ -25,6 +25,7 @@ cd Assignment-for-School-Admissin-System
 docker compose up --build
 ```
 
+
 ### 2. Access the Applications
 Once the containers are built and started:
 - **Frontend Web UI:** [http://localhost:3000](http://localhost:3000)
